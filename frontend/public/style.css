@@ -904,6 +904,24 @@ body.dark-theme {
 .mode-badge.debugging { background: rgba(234, 67, 53, 0.15); color: #f87171; border: 1px solid rgba(234, 67, 53, 0.3); }
 .mode-badge.planning { background: rgba(249, 171, 0, 0.15); color: #fbbf24; border: 1px solid rgba(249, 171, 0, 0.3); }
 .mode-badge.coding { background: rgba(52, 168, 83, 0.15); color: #34d399; border: 1px solid rgba(52, 168, 83, 0.3); }
+.mode-badge.normal { background: rgba(155, 114, 203, 0.18); color: #c084fc; border: 1px solid rgba(155, 114, 203, 0.35); }
+
+.speech-read-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 11px;
+  transition: all 0.15s ease;
+  margin-left: 4px;
+}
+
+.speech-read-btn:hover {
+  color: #c084fc;
+  background: rgba(155, 114, 203, 0.15);
+}
 
 .time {
   margin-left: auto;

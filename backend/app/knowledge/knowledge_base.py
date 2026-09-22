@@ -64,6 +64,80 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
         doc_url="https://dev.epicgames.com/documentation/en-us/unreal-engine/enhanced-input-in-unreal-engine"
     ),
     KnowledgeEntry(
+        id="ue5-line-trace-collision",
+        title="Unreal Engine Line Traces, Raycasting & Hit Results",
+        category="Unreal Engine",
+        tags=["line trace", "raycast", "collision", "hit result", "weapon", "interaction", "trace"],
+        summary="Performing single and multi-channel raycasts, processing FHitResult, and collision channels.",
+        content="""Line traces (raycasts) detect geometry and actors along a vector in 3D space:
+1. Basic Single Line Trace by Channel in C++:
+```cpp
+#include "CollisionQueryParams.h"
+#include "Engine/World.h"
+
+FHitResult HitResult;
+FVector StartLocation = CameraLocation;
+FVector EndLocation = StartLocation + (CameraForwardVector * 5000.0f); // 50 meters
+
+FCollisionQueryParams QueryParams;
+QueryParams.AddIgnoredActor(this); // Ignore self
+QueryParams.bTraceComplex = true;
+
+bool bHit = GetWorld()->LineTraceSingleByChannel(
+    HitResult,
+    StartLocation,
+    EndLocation,
+    ECC_Visibility, // or ECC_GameTraceChannel1 for Weapons
+    QueryParams
+);
+
+if (bHit && HitResult.GetActor())
+{
+    AActor* HitActor = HitResult.GetActor();
+    FVector HitPoint = HitResult.ImpactPoint;
+    FVector HitNormal = HitResult.ImpactNormal;
+    // Apply damage or trigger interaction
+}
+```
+2. Debug Line: Draw debug lines using `DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 2.0f);`.
+3. Collision Channels: Always configure custom Object Channels (e.g. `Projectile`, `Interactable`) in Project Settings -> Collision for high-performance filtering.""",
+        source_citation="Unreal Engine 5 Official Documentation — Traces with Raycasts",
+        doc_url="https://dev.epicgames.com/documentation/en-us/unreal-engine/traces-with-raycasts-in-unreal-engine"
+    ),
+    KnowledgeEntry(
+        id="ue5-character-movement-jump",
+        title="Character Movement, Jumping & Variable Jump Height",
+        category="Unreal Engine",
+        tags=["character", "movement", "jump", "charactermovement", "jumping", "locomotion"],
+        summary="Configuring UCharacterMovementComponent, Enhanced Input binding, and variable jump height.",
+        content="""Character movement in UE5 utilizes `UCharacterMovementComponent`:
+1. Enhanced Input Movement Binding:
+```cpp
+void AMyCharacter::Move(const FInputActionValue& Value)
+{
+    const FVector2D MovementVector = Value.Get<FVector2D>();
+    if (Controller != nullptr)
+    {
+        const FRotator Rotation = Controller->GetControlRotation();
+        const FRotator YawRotation(0, Rotation.Yaw, 0);
+        const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+        const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+        AddMovementInput(ForwardDirection, MovementVector.Y);
+        AddMovementInput(RightDirection, MovementVector.X);
+    }
+}
+```
+2. Variable Jump Height:
+   - Bind `JumpAction` to `ETriggerEvent::Started` calling `ACharacter::Jump()`.
+   - Bind `JumpAction` to `ETriggerEvent::Completed` calling `ACharacter::StopJumping()`.
+   - In Character Blueprint or C++ constructor: set `JumpMaxHoldTime = 0.35f;` to allow players to jump higher by holding the button!
+3. Air Control & Speeds:
+   `GetCharacterMovement()->AirControl = 0.35f;`
+   `GetCharacterMovement()->MaxWalkSpeed = 600.0f;`""",
+        source_citation="Epic Dev Community — Unreal Engine 5 Character Movement Architecture",
+        doc_url="https://dev.epicgames.com/documentation/en-us/unreal-engine/character-movement-component-in-unreal-engine"
+    ),
+    KnowledgeEntry(
         id="ue5-uproperty-specifiers",
         title="Unreal Engine Reflection & UPROPERTY Specifiers",
         category="Unreal Engine",

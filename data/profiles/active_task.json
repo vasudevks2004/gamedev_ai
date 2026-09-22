@@ -1,5 +1,60 @@
 {
   "task_name": "Third-Person Combat System",
   "description": "Build complete weapon, line tracing, hit reaction and damage system",
-  "items": []
+  "items": [
+    {
+      "id": "1",
+      "title": "Create AWeaponBase C++ Class",
+      "category": "C++",
+      "completed": true
+    },
+    {
+      "id": "2",
+      "title": "Model Rifle & Align Sockets in Blender",
+      "category": "Blender",
+      "completed": true
+    },
+    {
+      "id": "3",
+      "title": "Export FBX with 0.01 Scale to UE5",
+      "category": "Blender",
+      "completed": true
+    },
+    {
+      "id": "4",
+      "title": "Implement Weapon Fire Line Trace",
+      "category": "C++",
+      "completed": true
+    },
+    {
+      "id": "5",
+      "title": "Setup Weapon Fire Enhanced Input Action",
+      "category": "Unreal Engine",
+      "completed": false
+    },
+    {
+      "id": "6",
+      "title": "Create Weapon Blueprint & Mesh Assign",
+      "category": "Blueprints",
+      "completed": false
+    },
+    {
+      "id": "7",
+      "title": "Animation Blueprint Upper-Body Montage Blend",
+      "category": "Animation",
+      "completed": false
+    },
+    {
+      "id": "8",
+      "title": "Health Component & Damage Pipeline",
+      "category": "C++",
+      "completed": false
+    },
+    {
+      "id": "9",
+      "title": "Niagara Muzzle Flash & Impact Decal",
+      "category": "Unreal Engine",
+      "completed": false
+    }
+  ]
 }

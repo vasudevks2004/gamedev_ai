@@ -2,6 +2,7 @@
 
 let activeMode = 'auto';
 let isVoiceRecording = false;
+let lastInputWasVoice = false;
 let speechRecognition = null;
 let screenStream = null;
 
@@ -527,8 +528,9 @@ async function sendMessage(text) {
     const data = await res.json();
     appendMessage('assistant', data.reply, data.mode);
 
-    if (isVoiceRecording && 'speechSynthesis' in window) {
+    if ((lastInputWasVoice || isVoiceRecording) && 'speechSynthesis' in window) {
       speakResponse(data.reply);
+      lastInputWasVoice = false;
     }
   } catch (err) {
     appendMessage('assistant', `⚠️ Connection Notice: Could not reach mentor backend (${err.message}). Make sure the backend server is active on port 8000.`, 'error');
@@ -559,12 +561,21 @@ function appendMessage(role, text, mode) {
   modeBadge.className = `badge mode-badge ${mode || 'teaching'}`;
   modeBadge.textContent = (mode || 'auto').toUpperCase();
 
+  header.appendChild(senderName);
+  header.appendChild(modeBadge);
+
+  if (role === 'assistant') {
+    const speakBtn = document.createElement('button');
+    speakBtn.className = 'speech-read-btn';
+    speakBtn.title = 'Listen to Thangan';
+    speakBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+    speakBtn.addEventListener('click', () => speakResponse(text));
+    header.appendChild(speakBtn);
+  }
+
   const timeSpan = document.createElement('span');
   timeSpan.className = 'time';
   timeSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-  header.appendChild(senderName);
-  header.appendChild(modeBadge);
   header.appendChild(timeSpan);
 
   const body = document.createElement('div');
@@ -633,6 +644,7 @@ function setupSpeechRecognition() {
   speechRecognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
     chatInput.value = transcript;
+    lastInputWasVoice = true;
     sendMessage(transcript);
   };
 
@@ -671,11 +683,58 @@ function stopVoice() {
 }
 
 function speakResponse(text) {
-  const clean = text.replace(/```[\s\S]*?```/g, 'Code block omitted.')
-                    .replace(/[*#`]/g, '')
-                    .slice(0, 250);
-  const utterance = new SpeechSynthesisUtterance(clean);
-  utterance.rate = 1.05;
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+
+  // Clean out code blocks, markdown headings, citations, and symbols for natural spoken audio
+  let spoken = text
+    .replace(/```[\s\S]*?```/g, '')             // strip code blocks completely
+    .replace(/`([^`]+)`/g, '$1')                 // inline code to spoken words
+    .replace(/^#{1,6}\s*([^\n]+)/gm, '$1.')      // headings to sentences
+    .replace(/\*\*([^*]+)\*\*/g, '$1')           // bold markers
+    .replace(/\*([^*]+)\*/g, '$1')               // italic markers
+    .replace(/>\s*([^\n]+)/gm, '$1')             // blockquotes
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')     // markdown links to text
+    .replace(/^[-*•]\s+/gm, '')                  // bullets
+    .replace(/^\d+\.\s+/gm, '')                  // numbered lists
+    .replace(/\s+/g, ' ')                        // multiple spaces
+    .trim();
+
+  if (!spoken) return;
+
+  // Speak the conversational essence (up to 2 sentences or 220 chars) so Thangan sounds natural
+  const sentenceMatches = spoken.match(/[^.!?]+[.!?]+/g);
+  let summary = '';
+  if (sentenceMatches && sentenceMatches.length > 0) {
+    summary = sentenceMatches.slice(0, 2).join(' ').trim();
+  }
+  if (!summary || summary.length < 15) {
+    summary = spoken.slice(0, 200).trim();
+  }
+  if (summary.length > 240) {
+    summary = summary.slice(0, 235) + '...';
+  }
+
+  const utterance = new SpeechSynthesisUtterance(summary);
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+
+  // Pick a smooth natural voice if available
+  const voices = window.speechSynthesis.getVoices();
+  const preferredVoice = voices.find(v => 
+    v.lang.startsWith('en') && (
+      v.name.includes('Natural') || 
+      v.name.includes('Google') || 
+      v.name.includes('Aria') || 
+      v.name.includes('David') ||
+      v.name.includes('Jenny')
+    )
+  ) || voices.find(v => v.lang.startsWith('en'));
+
+  if (preferredVoice) {
+    utterance.voice = preferredVoice;
+  }
+
   window.speechSynthesis.speak(utterance);
 }
 

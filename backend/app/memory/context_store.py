@@ -77,7 +77,12 @@ class ContextStore:
             try:
                 with open(self.task_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    return AssignedTask(**data)
+                    task = AssignedTask(**data)
+                    if not task.items:
+                        default_task = AssignedTask()
+                        task.items = default_task.items
+                        self.save_task(task)
+                    return task
             except Exception as e:
                 print(f"[ContextStore] Error loading task: {e}")
         t = AssignedTask()
