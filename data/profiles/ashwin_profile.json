@@ -1,0 +1,79 @@
+{
+  "name": "Ashwin",
+  "role": "Game Developer & Student",
+  "primary_engine": "Unreal Engine 5",
+  "core_tools": [
+    "Unreal Engine 5",
+    "C++",
+    "Blender",
+    "Visual Studio / Rider",
+    "Git"
+  ],
+  "preferred_learning_style": "Pedagogical (Concept -> Unreal Engine -> Code -> Pitfalls -> Practice)",
+  "skills": {
+    "Unreal Engine": {
+      "category_name": "Unreal Engine",
+      "overall_mastery": 65,
+      "completed_topics": [
+        "Actor Architecture",
+        "Components",
+        "Enhanced Input",
+        "GameMode & PlayerController",
+        "Character Movement Component",
+        "Blueprint Scripting",
+        "Line Traces"
+      ],
+      "in_progress_topics": [
+        "Multiplayer Replication",
+        "Animation Blueprints & Control Rig"
+      ],
+      "weak_areas": [
+        "Network Replication / RPCs",
+        "Nanite & Lumen Optimization"
+      ]
+    },
+    "C++": {
+      "category_name": "C++",
+      "overall_mastery": 60,
+      "completed_topics": [
+        "Modern C++ Basics",
+        "OOP & Inheritance",
+        "Pointers & References",
+        "UCLASS & UPROPERTY Reflection",
+        "UFUNCTION Specifiers",
+        "Actor Lifecycle"
+      ],
+      "in_progress_topics": [
+        "Smart Pointers vs Garbage Collection",
+        "Delegates & Events"
+      ],
+      "weak_areas": [
+        "Dynamic Multicast Delegates",
+        "Memory Profiling"
+      ]
+    },
+    "Blender": {
+      "category_name": "Blender",
+      "overall_mastery": 55,
+      "completed_topics": [
+        "Low-Poly Hard Surface Modeling",
+        "Basic UV Unwrapping",
+        "PBR Texture Setup",
+        "FBX Export Scale & Coordinate Conventions"
+      ],
+      "in_progress_topics": [
+        "Character Rigging & Weight Painting",
+        "High-to-Low Normal Baking"
+      ],
+      "weak_areas": [
+        "Weight Painting Complex Deformations",
+        "Root Motion Export for Unreal"
+      ]
+    }
+  },
+  "notes": [
+    "Ashwin prefers deep conceptual explanations before seeing code.",
+    "Always highlight common beginner/intermediate pitfalls when explaining Unreal C++.",
+    "Connect Blender techniques directly to Unreal Engine asset import requirements."
+  ]
+}

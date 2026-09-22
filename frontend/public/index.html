@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thangan — Ashwin's GameDev AI Companion</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <!-- Fonts & Icons: Claude's Newsreader Serif + Plus Jakarta Sans + Inter + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="dark-theme">
+  <div id="app" class="app-shell">
+    
+    <!-- Header Bar -->
+    <header class="app-header">
+      <div class="header-left">
+        <!-- New Thangan Custom Logo -->
+        <div class="thangan-logo" title="Thangan — GameDev Senior AI">
+          <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="thanganGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00d2ff" />
+                <stop offset="50%" stop-color="#0070f3" />
+                <stop offset="100%" stop-color="#7928ca" />
+              </linearGradient>
+              <linearGradient id="bladeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="100%" stop-color="#00d2ff" />
+              </linearGradient>
+            </defs>
+            <!-- Hexagonal Outer Shield -->
+            <polygon points="18,2 33,10 33,26 18,34 3,26 3,10" stroke="url(#thanganGrad)" stroke-width="2.2" fill="#12151d" />
+            <!-- Inner Glowing Node Network / Katana Core -->
+            <circle cx="18" cy="18" r="4" fill="url(#thanganGrad)" />
+            <line x1="18" y1="6" x2="18" y2="14" stroke="url(#bladeGrad)" stroke-width="2" stroke-linecap="round" />
+            <line x1="18" y1="22" x2="18" y2="30" stroke="url(#bladeGrad)" stroke-width="2" stroke-linecap="round" />
+            <line x1="8" y1="12" x2="15" y2="16" stroke="#00d2ff" stroke-width="1.6" stroke-linecap="round" />
+            <line x1="28" y1="12" x2="21" y2="16" stroke="#00d2ff" stroke-width="1.6" stroke-linecap="round" />
+            <line x1="8" y1="24" x2="15" y2="20" stroke="#7928ca" stroke-width="1.6" stroke-linecap="round" />
+            <line x1="28" y1="24" x2="21" y2="20" stroke="#7928ca" stroke-width="1.6" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">THANGAN</span>
+          <span class="brand-badge-tag">AI MENTOR</span>
+        </div>
+      </div>
+
+      <!-- Quick Context Pill (Click to edit) -->
+      <button id="quick-context-pill" class="context-pill" title="Click to edit active project/file">
+        <span class="pill-dot"></span>
+        <span class="pill-project" id="pill-project">ShooterGame</span>
+        <span class="pill-sep">/</span>
+        <span class="pill-file" id="pill-file">WeaponComponent.cpp</span>
+        <i class="fa-solid fa-pen pill-edit-icon"></i>
+      </button>
+
+      <!-- Right Header Actions -->
+      <div class="header-actions">
+        <button id="toggle-task-panel-btn" class="icon-pill-btn active" title="Toggle Task Breakdown Chart">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Task Chart</span>
+        </button>
+        <button id="study-dashboard-btn" class="icon-pill-btn" title="Study & Skills Dashboard">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>Study</span>
+        </button>
+        <button id="resources-modal-btn" class="icon-pill-btn" title="Video & Documentation Library">
+          <i class="fa-solid fa-film"></i>
+          <span>Videos</span>
+        </button>
+        <button id="project-scan-btn" class="icon-pill-btn" title="Scan Local Unreal Project">
+          <i class="fa-solid fa-folder-tree"></i>
+          <span>Project</span>
+        </button>
+        <button id="screen-share-btn" class="icon-pill-btn" title="Screen Vision Inspection">
+          <i class="fa-solid fa-desktop"></i>
+          <span id="screen-btn-text">Screen</span>
+        </button>
+        <button id="voice-hud-btn" class="icon-pill-btn" title="Push-to-Talk Voice Assistant">
+          <i class="fa-solid fa-microphone"></i>
+          <span id="voice-btn-text">Voice</span>
+        </button>
+        <button id="toggle-minibot-btn" class="icon-pill-btn active" title="Toggle Right Mini-Bot">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Suggestions</span>
+        </button>
+        <button id="settings-btn" class="icon-pill-btn icon-only" title="Settings">
+          <i class="fa-solid fa-sliders"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- 3-Column Responsive Workspace -->
+    <div class="workspace-body">
+      
+      <!-- LEFT PANEL: Task & Topic Completion Chart -->
+      <aside id="task-panel" class="side-panel left-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Task Roadmap</span>
+          </div>
+          <button id="assign-task-btn" class="mini-accent-btn" title="Assign New Task">
+            <i class="fa-solid fa-plus"></i> New Task
+          </button>
+        </div>
+
+        <div class="panel-body">
+          <!-- Active Task Title & Overall Progress -->
+          <div class="task-summary-card">
+            <div class="task-name" id="task-title-display">Third-Person Combat System</div>
+            <div class="overall-progress-bar-wrap">
+              <div class="progress-info">
+                <span>Task Completion</span>
+                <span class="progress-pct" id="overall-task-pct">44%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill-glow" id="overall-task-fill" style="width: 44%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Topic Completion Chart -->
+          <div class="topic-chart-box">
+            <div class="box-heading"><i class="fa-solid fa-layer-group"></i> Progress by Topic</div>
+            <div class="topic-chart-bars" id="topic-chart-container">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Interactive Milestone Checklist -->
+          <div class="task-checklist-box">
+            <div class="box-heading">
+              <span><i class="fa-solid fa-square-check"></i> Subtasks & Milestones</span>
+              <span class="checklist-count" id="checklist-count-display">4/9</span>
+            </div>
+
+            <!-- Inline Add Subtask Input Form -->
+            <form id="inline-add-task-form" class="inline-add-task-form">
+              <div class="inline-add-row">
+                <input type="text" id="inline-task-input" placeholder="+ Add task or milestone..." required autocomplete="off" />
+                <select id="inline-task-category">
+                  <option value="Unreal Engine">UE5</option>
+                  <option value="C++">C++</option>
+                  <option value="Blender">Blender</option>
+                  <option value="Blueprints">Blueprints</option>
+                  <option value="Animation">Animation</option>
+                  <option value="Physics">Physics</option>
+                </select>
+                <button type="submit" class="inline-add-btn" title="Add Subtask"><i class="fa-solid fa-plus"></i></button>
+              </div>
+            </form>
+
+            <div class="task-items-list" id="task-items-container">
+              <!-- Dynamically populated items with delete button on each -->
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTER: Main Chat Container -->
+      <main class="chat-container">
+        
+        <!-- Screen Stream Preview (Hidden until activated) -->
+        <div id="screen-preview-bar" class="screen-bar" style="display: none;">
+          <div class="screen-bar-header">
+            <span><i class="fa-solid fa-eye"></i> Thangan Vision: Inspecting Unreal Editor / Blender</span>
+            <div class="screen-bar-actions">
+              <button id="inspect-frame-btn" class="mini-accent-btn" title="Inspect current screen for errors"><i class="fa-solid fa-magnifying-glass"></i> Inspect Screen with AI</button>
+              <button id="close-screen-btn" class="ghost-btn">&times;</button>
+            </div>
+          </div>
+          <video id="screen-video" autoplay playsinline muted></video>
+          <canvas id="screen-canvas" style="display: none;"></canvas>
+        </div>
+
+        <!-- Chat Stream -->
+        <div id="chat-stream" class="chat-stream">
+          <!-- Welcome Message -->
+          <div class="chat-message assistant-message">
+            <div class="avatar"><i class="fa-solid fa-bolt"></i></div>
+            <div class="bubble">
+              <div class="bubble-header">
+                <span class="author">Thangan</span>
+                <span class="badge mode-badge teaching">MENTOR</span>
+                <span class="time">Ready</span>
+              </div>
+              <div class="bubble-text">
+                <p>Vanakkam <strong>Ashwin</strong>! I am <strong>Thangan</strong>, your senior game-development mentor.</p>
+                <p>I specialize in <strong>Unreal Engine 5</strong>, <strong>Blueprints</strong>, <strong>Modern C++</strong>, and <strong>Blender 4.x</strong>. I can:</p>
+                <ul>
+                  <li><strong>Teach & Untangle Blueprints</strong>: Node graphs, execution flow, pure functions, interfaces (BPI), event dispatchers, and C++ interop.</li>
+                  <li><strong>Debug Unreal Errors</strong>: C++ compiler faults, linker errors, null pointers, and assertion crashes.</li>
+                  <li><strong>Track Your Tasks</strong>: Monitor your active milestones on the left chart across Blender, C++, and Blueprints.</li>
+                  <li><strong>Provide Live Tips</strong>: Check the right suggestion panel for contextual tips as you work.</li>
+                </ul>
+                <p>What are we building or debugging right now?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Prompt Chips -->
+        <div class="quick-chips">
+          <button class="chip" data-prompt="How do Blueprint Interfaces work in Unreal Engine 5, and why are they better than direct casting?">
+            <i class="fa-solid fa-project-diagram"></i> Blueprint Interfaces vs Casting
+          </button>
+          <button class="chip" data-prompt="What is the difference between BlueprintCallable, BlueprintImplementableEvent, and BlueprintNativeEvent in C++?">
+            <i class="fa-solid fa-code"></i> C++ &rarr; Blueprint Macros
+          </button>
+          <button class="chip" data-prompt="I have a compiler error: Fatal error C2065: 'UStaticMeshComponent' undeclared identifier. How do I fix it?">
+            <i class="fa-solid fa-bug"></i> Debug C2065 Error
+          </button>
+          <button class="chip" data-prompt="What is the complete workflow to rig and export a character from Blender 4.x to UE5 with root motion?">
+            <i class="fa-solid fa-cube"></i> Blender &rarr; UE5 Rigging
+          </button>
+        </div>
+
+        <!-- Floating Input Dock -->
+        <div class="input-dock">
+          <!-- Mode Bar -->
+          <div class="mode-bar">
+            <span class="mode-label">Mode:</span>
+            <div class="mode-buttons">
+              <button class="mode-tag active" data-mode="auto">Auto</button>
+              <button class="mode-tag" data-mode="teaching">Teaching</button>
+              <button class="mode-tag" data-mode="debugging">Debugging</button>
+              <button class="mode-tag" data-mode="coding">Coding</button>
+              <button class="mode-tag" data-mode="planning">Roadmap</button>
+            </div>
+            <span id="typing-indicator" class="typing-indicator"><i class="fa-solid fa-circle-notch fa-spin" style="display: none;"></i> Ready</span>
+          </div>
+
+          <form id="chat-form" class="dock-form">
+            <textarea
+              id="chat-input"
+              rows="1"
+              placeholder="Ask Thangan anything, paste an error, or speak..."
+              required
+            ></textarea>
+            <div class="dock-actions">
+              <button type="button" id="ptt-btn" class="dock-btn ptt-dock-btn" title="Push-to-Talk Voice">
+                <i class="fa-solid fa-microphone"></i>
+              </button>
+              <button type="submit" id="send-btn" class="dock-btn send-dock-btn" title="Send (Enter)">
+                <i class="fa-solid fa-arrow-up"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </main>
+
+      <!-- RIGHT PANEL: Thangan Mini Suggestion Bot -->
+      <aside id="minibot-panel" class="side-panel right-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <i class="fa-solid fa-lightbulb"></i>
+            <span>Thangan Mini</span>
+          </div>
+          <span class="mini-live-tag"><i class="fa-solid fa-circle"></i> Live Tips</span>
+        </div>
+
+        <div class="panel-body">
+          <!-- Smart Contextual Tips -->
+          <div class="minibot-tips-card">
+            <div class="box-heading">
+              <span><i class="fa-solid fa-wand-magic-sparkles"></i> Contextual Tips</span>
+              <button id="refresh-tips-btn" class="ghost-btn" title="Refresh Tips"><i class="fa-solid fa-rotate-right"></i></button>
+            </div>
+            <div class="tips-list" id="tips-container">
+              <!-- Populated via /api/minibot/suggest -->
+            </div>
+          </div>
+
+          <!-- Quick Blueprint / C++ / Blender Cheat Sheet -->
+          <div class="minibot-shortcuts-card">
+            <div class="box-heading"><i class="fa-solid fa-bolt"></i> Quick Inquiries</div>
+            <div class="quick-inquiries">
+              <button class="quick-inq-btn" data-q="Explain Blueprint pure vs impure functions">
+                ⚡ Pure vs Impure Nodes
+              </button>
+              <button class="quick-inq-btn" data-q="How to prevent hard reference memory bloat in Blueprints?">
+                ⚡ Soft Object Pointers
+              </button>
+              <button class="quick-inq-btn" data-q="What is the exact FBX unit scale for Blender to Unreal?">
+                ⚡ Blender FBX 0.01 Scale
+              </button>
+              <button class="quick-inq-btn" data-q="When should I use TObjectPtr vs raw pointer in UE5?">
+                ⚡ TObjectPtr vs Raw Pointer
+              </button>
+            </div>
+          </div>
+
+          <!-- Mini Bot Chat Area -->
+          <div class="minibot-chat-box">
+            <div class="box-heading"><i class="fa-solid fa-comments"></i> Sidekick Chat</div>
+            <div class="minibot-messages" id="minibot-messages">
+              <div class="minibot-msg bot">
+                <span class="sender">Thangan Mini:</span>
+                <p>Ask quick syntax questions or lookup shortcuts here without filling your main screen!</p>
+              </div>
+            </div>
+            <form id="minibot-form" class="minibot-input-wrap">
+              <input type="text" id="minibot-input" placeholder="Quick question..." required />
+              <button type="submit" class="minibot-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+            </form>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- Assign New Task Modal -->
+    <div id="assign-task-modal" class="modal-backdrop" style="display: none;">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h3><i class="fa-solid fa-list-check"></i> Assign New Development Task</h3>
+          <button id="close-assign-task-btn" class="ghost-btn">&times;</button>
+        </div>
+        <form id="assign-task-form" class="modal-fields">
+          <div class="field">
+            <label>Task Goal / Feature Name</label>
+            <input type="text" id="input-new-task-name" placeholder="e.g. Build Inventory System or Rig Character in Blender" required />
+          </div>
+          <div class="field">
+            <label>Description (Optional)</label>
+            <textarea id="input-new-task-desc" rows="2" placeholder="Brief scope or target engine version..."></textarea>
+          </div>
+          <div class="modal-buttons">
+            <button type="button" id="cancel-assign-task-btn" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary">Generate Roadmap Chart</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Context Edit Modal -->
+    <div id="context-modal" class="modal-backdrop" style="display: none;">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h3>Workspace Context</h3>
+          <button id="close-context-modal-btn" class="ghost-btn">&times;</button>
+        </div>
+        <form id="context-form" class="modal-fields">
+          <div class="field">
+            <label>Project Name</label>
+            <input type="text" id="input-project-name" value="ShooterGame" required />
+          </div>
+          <div class="field">
+            <label>Engine Version</label>
+            <input type="text" id="input-engine-version" value="Unreal Engine 5.4" required />
+          </div>
+          <div class="field">
+            <label>Current Task</label>
+            <input type="text" id="input-current-task" value="Third-Person Combat System" required />
+          </div>
+          <div class="field">
+            <label>Active File</label>
+            <input type="text" id="input-current-file" value="WeaponComponent.cpp" required />
+          </div>
+          <div class="field">
+            <label>Compiler Error / Output Log (Optional)</label>
+            <textarea id="input-recent-error" rows="3" placeholder="Paste compiler error here..."></textarea>
+          </div>
+          <div class="modal-buttons">
+            <button type="button" id="cancel-context-btn" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Context</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-backdrop" style="display: none;">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h3>AI Engine Settings</h3>
+          <button id="close-settings-modal-btn" class="ghost-btn">&times;</button>
+        </div>
+        <form id="settings-form" class="modal-fields">
+          <div class="field">
+            <label>Provider</label>
+            <select id="select-provider">
+              <option value="ollama">Ollama (Local RTX 4060 GPU)</option>
+              <option value="mock">Offline Mentor Engine</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Ollama Model</label>
+            <input type="text" id="input-ollama-model" value="qwen2.5-coder:7b" />
+          </div>
+          <div class="field">
+            <label>Ollama Endpoint</label>
+            <input type="text" id="input-ollama-url" value="http://localhost:11434" />
+          </div>
+          <div class="modal-buttons">
+            <button type="button" id="cancel-settings-btn" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary">Apply</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Study & Skills Dashboard Modal -->
+    <div id="study-modal" class="modal-backdrop" style="display: none;">
+      <div class="modal-box modal-wide">
+        <div class="modal-head">
+          <h3><i class="fa-solid fa-graduation-cap"></i> Ashwin's Game-Dev Mastery & Weak Areas</h3>
+          <button id="close-study-modal-btn" class="ghost-btn">&times;</button>
+        </div>
+        <div class="modal-body" id="study-modal-content">
+          <!-- Populated dynamically via /api/study/dashboard -->
+          <div class="skills-overview-row" id="skills-bars-container"></div>
+          <div class="weak-areas-card">
+            <h4><i class="fa-solid fa-triangle-exclamation"></i> Identified Weak Areas (Focus Topics)</h4>
+            <div id="weak-areas-list" class="tag-cloud"></div>
+          </div>
+          <div class="completed-topics-card">
+            <h4><i class="fa-solid fa-circle-check"></i> Mastered Modules</h4>
+            <div id="completed-topics-list" class="tag-cloud green-tags"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resource & Video Discovery Modal -->
+    <div id="resources-modal" class="modal-backdrop" style="display: none;">
+      <div class="modal-box modal-wide">
+        <div class="modal-head">
+          <h3><i class="fa-solid fa-film"></i> Curated Learning Videos & Technical Docs</h3>
+          <button id="close-resources-modal-btn" class="ghost-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="search-bar-row">
+            <input type="text" id="resource-search-input" placeholder="Search topic (e.g. Niagara, Replication, Retopology, C++)..." />
+            <button id="resource-search-btn" class="btn btn-primary"><i class="fa-solid fa-search"></i> Find</button>
+          </div>
+          <div class="tier-tabs">
+            <button class="tier-tab-btn active" data-tier="all">All Tiers</button>
+            <button class="tier-tab-btn" data-tier="Beginner">Beginner</button>
+            <button class="tier-tab-btn" data-tier="Intermediate">Intermediate</button>
+            <button class="tier-tab-btn" data-tier="Advanced">Advanced</button>
+          </div>
+          <div id="video-cards-grid" class="video-cards-grid">
+            <!-- Populated via /api/resources/recommend -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Scanner Modal -->
+    <div id="project-modal" class="modal-backdrop" style="display: none;">
+      <div class="modal-box modal-wide">
+        <div class="modal-head">
+          <h3><i class="fa-solid fa-folder-tree"></i> Scan Local Unreal Engine Project</h3>
+          <button id="close-project-modal-btn" class="ghost-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="project-scan-form" class="modal-fields">
+            <div class="field">
+              <label>Unreal Project Root Directory (containing .uproject & Source/)</label>
+              <div class="input-with-button">
+                <input type="text" id="input-project-path" placeholder="e.g. V:\personal-gamedev-ai or C:\UnrealProjects\ShooterGame" required />
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-satellite-dish"></i> Scan Project</button>
+              </div>
+            </div>
+          </form>
+          <div id="project-scan-results" class="project-scan-results" style="display: none;">
+            <div class="scan-metric-grid" id="scan-metrics"></div>
+            <h4>Indexed C++ Classes</h4>
+            <div id="scanned-classes-list" class="scanned-classes-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
