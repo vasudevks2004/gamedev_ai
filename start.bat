@@ -86,12 +86,8 @@ if errorlevel 1 goto :pip_failed
 
 :deps_ok
 echo.
-echo [3/3] Launching Companion Server on http://localhost:8000 ...
-start "" "http://localhost:8000"
-echo Server active on http://localhost:8000. Press CTRL+C to stop.
-echo.
-
-%PYTHON_EXE% -m uvicorn app.main:app --app-dir "%BASE_DIR%backend" --host 127.0.0.1 --port 8000
+echo [3/3] Launching Companion Server...
+%PYTHON_EXE% "%BASE_DIR%backend\run_server.py"
 if errorlevel 1 goto :server_error
 goto :eof
 
